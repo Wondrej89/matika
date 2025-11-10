@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Počítací hry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="game">
+    <h1>Počítací hry</h1>
+
+<!-- Panel s odměnou / věží -->
+<div id="rewardPanel">
+  <div class="reward-label">Jak ti to jde:</div>
+  <div class="reward-tower" id="rewardTower"></div>
+</div>
+<button id="exitGameBtn" class="exit-btn" hidden>X</button>
+<!-- Modal pro ukončení hry -->
+<div id="exitModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <h2>Ukončit hru?</h2>
+    <p>Opravdu chceš ukončit tuto hru a vrátit se na začátek?<br>
+       Tvůj postup v této hře se ztratí.</p>
+    <div class="modal-buttons">
+      <button id="exitCancelBtn" class="btn-secondary">Zůstat ve hře</button>
+      <button id="exitConfirmBtn" class="btn-danger">Ano, ukončit</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Úvodní obrazovka -->
+    <div id="startScreen">
+      <div class="mode-section">
+        <div class="mode-title">Sčítání a odčítání</div>
+        <div class="mode-grid">
+          <!-- Počítání s tvary -->
+          <div class="mode-card">
+            <div class="mode-icon">□ ± □</div>
+            <div class="mode-label">tvary</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="countShapes" data-range="10">do 10</button>
+              <button class="range-btn" data-game="countShapes" data-range="20">do 20</button>
+            </div>
+          </div>
+
+          <!-- Počítání s čísly -->
+          <div class="mode-card">
+            <div class="mode-icon">1 2 ± 3</div>
+            <div class="mode-label">čísla</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="countNumbers" data-range="10">do 10</button>
+              <button class="range-btn" data-game="countNumbers" data-range="20">do 20</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="mode-separator">
+
+      <div class="mode-section">
+        <div class="mode-title">Porovnávání</div>
+        <div class="mode-grid">
+          <!-- Porovnávání tvarů -->
+          <div class="mode-card">
+            <div class="mode-icon">□ ≷ □</div>
+            <div class="mode-label">tvary</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="compareShapes" data-range="10">do 10</button>
+              <button class="range-btn" data-game="compareShapes" data-range="20">do 20</button>
+            </div>
+          </div>
+
+          <!-- Porovnávání čísel -->
+          <div class="mode-card">
+            <div class="mode-icon">1 ≷ 2</div>
+            <div class="mode-label">čísla</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="compareNumbers" data-range="10">do 10</button>
+              <button class="range-btn" data-game="compareNumbers" data-range="20">do 20</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Herní obrazovka: počítání s tvary -->
+    <div id="gameScreen" hidden>
+      <div class="level-info">
+        Úroveň <span id="level">1</span>/10 • Skóre: <span id="score">0</span> • Rozsah: do <span id="rangeLabel">10</span>
+      </div>
+
+      <div class="problem" id="problem">
+        <div class="group">
+          <div class="shapes" id="leftShapes"></div>
+        </div>
+        <div class="operator" id="operator">+</div>
+        <div class="group">
+          <div class="shapes" id="rightShapes"></div>
+        </div>
+        <div class="equals">=</div>
+        <div class="result-placeholder" id="resultPlaceholder">?</div>
+      </div>
+
+      <div class="number-picker" id="numberPicker"></div>
+
+      <div class="controls">
+        <button id="checkBtn" disabled>Zkontroluj</button>
+        <button id="nextBtn" disabled>Další příklad</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="summary" id="summary" hidden>
+        <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+        <div>
+          Měl jsi <span class="highlight" id="finalScore"></span> z 10 dobře.
+        </div>
+        <div style="margin-top:0.5rem;">
+          <button id="restartBtn">Hrát znovu</button>
+          <button id="backBtn">Zpět na výběr hry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Herní obrazovka: počítání s čísly -->
+    <div id="gameScreenNumbers" hidden>
+      <div class="level-info">
+        Úroveň <span id="levelNum">1</span>/10 • Skóre: <span id="scoreNum">0</span> • Rozsah: do <span id="rangeLabelNum">10</span>
+      </div>
+
+      <div class="problem">
+        <div class="group">
+          <div class="big-number" id="leftNumberNum"></div>
+        </div>
+        <div class="operator" id="operatorNum">+</div>
+        <div class="group">
+          <div class="big-number" id="rightNumberNum"></div>
+        </div>
+        <div class="equals">=</div>
+        <div class="result-placeholder" id="resultPlaceholderNum">?</div>
+      </div>
+
+      <div class="number-picker" id="numberPickerNum"></div>
+
+      <div class="controls">
+        <button id="checkNumBtn" disabled>Zkontroluj</button>
+        <button id="nextNumBtn" disabled>Další příklad</button>
+      </div>
+
+      <div class="feedback" id="feedbackNum"></div>
+
+      <div class="summary" id="summaryNum" hidden>
+        <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+        <div>
+          Měl jsi <span class="highlight" id="finalScoreNum"></span> z 10 dobře.
+        </div>
+        <div style="margin-top:0.5rem;">
+          <button id="restartNumBtn">Hrát znovu</button>
+          <button id="backNumBtn">Zpět na výběr hry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Herní obrazovka: porovnávání tvarů -->
+    <div id="gameScreenCompare" hidden>
+      <div class="level-info">
+        Úroveň <span id="compareLevel">1</span>/10 • Skóre: <span id="compareScore">0</span> • Rozsah: do <span id="compareRangeLabel">10</span>
+      </div>
+
+      <div class="problem">
+        <div class="group">
+          <div class="shapes" id="compareLeftShapes"></div>
+        </div>
+        <div class="operator" id="compareOperator">?</div>
+        <div class="group">
+          <div class="shapes" id="compareRightShapes"></div>
+        </div>
+      </div>
+
+      <div class="sign-picker" id="signPicker"></div>
+
+      <div class="controls">
+        <button id="checkCompareBtn" disabled>Zkontroluj</button>
+        <button id="nextCompareBtn" disabled>Další příklad</button>
+      </div>
+
+      <div class="feedback" id="feedbackCompare"></div>
+
+      <div class="summary" id="summaryCompare" hidden>
+        <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+        <div>
+          Měl jsi <span class="highlight" id="finalScoreCompare"></span> z 10 dobře.
+        </div>
+        <div style="margin-top:0.5rem;">
+          <button id="restartCompareBtn">Hrát znovu</button>
+          <button id="backCompareBtn">Zpět na výběr hry</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Herní obrazovka: porovnávání čísel -->
+    <div id="gameScreenCompareNumbers" hidden>
+      <div class="level-info">
+        Úroveň <span id="compareLevelNum">1</span>/10 • Skóre: <span id="compareScoreNum">0</span> • Rozsah: do <span id="compareRangeLabelNum">10</span>
+      </div>
+
+      <div class="problem">
+        <div class="group">
+          <div class="big-number" id="compareLeftNumberNum"></div>
+        </div>
+        <div class="operator" id="compareOperatorNum">?</div>
+        <div class="group">
+          <div class="big-number" id="compareRightNumberNum"></div>
+        </div>
+      </div>
+
+      <div class="sign-picker" id="signPickerNum"></div>
+
+      <div class="controls">
+        <button id="checkCompareNumBtn" disabled>Zkontroluj</button>
+        <button id="nextCompareNumBtn" disabled>Další příklad</button>
+      </div>
+
+      <div class="feedback" id="feedbackCompareNum"></div>
+
+      <div class="summary" id="summaryCompareNum" hidden>
+        <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+        <div>
+          Měl jsi <span class="highlight" id="finalScoreCompareNum"></span> z 10 dobře.
+        </div>
+        <div style="margin-top:0.5rem;">
+          <button id="restartCompareNumBtn">Hrát znovu</button>
+          <button id="backCompareNumBtn">Zpět na výběr hry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

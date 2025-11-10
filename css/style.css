@@ -1,0 +1,621 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f5f7ff, #e3f5ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+.game {
+  background: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  max-width: 800px;
+  width: 100%;
+  position: relative;
+}
+
+h1 {
+  font-size: 1.6rem;
+  margin: 0 0 0.75rem;
+  text-align: center;
+}
+
+/* Panel s věží */
+#rewardPanel {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+/* Panel s věží – ve výchozím stavu schovaný, zobrazí se až ve hře */
+#rewardPanel[hidden] {
+  display: none !important;
+}
+
+.reward-label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.reward-tower {
+  display: flex;
+  flex-direction: column-reverse; /* stavíme odspoda */
+  justify-content: flex-start;
+  align-items: center;
+  width: 40px;
+  height: 120px;
+  border-radius: 0.5rem;
+  background: #f7f9ff;
+  border: 1px solid #dde3f5;
+  padding: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* jedno patro věže */
+.reward-block {
+  width: 100%;
+  height: calc((120px - 8px) / 10 - 2px); /* zhruba 1/10 výšky, minus mezery */
+  margin-top: 2px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #4f8cff, #6bcbff);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transform: translateY(10px);
+  opacity: 0;
+  animation: block-pop-in 0.25s ease-out forwards;
+}
+
+@keyframes block-pop-in {
+  0% {
+    transform: translateY(10px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* oslava při 10/10 */
+.reward-tower.full {
+  animation: tower-celebrate 0.5s ease-in-out;
+}
+
+@keyframes tower-celebrate {
+  0%   { transform: translateY(0); }
+  25%  { transform: translateY(-4px); }
+  50%  { transform: translateY(2px); }
+  75%  { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+
+/* Úvodní obrazovka */
+#startScreen {
+  margin-top: 0.5rem;
+}
+
+.mode-section {
+  margin-bottom: 1rem;
+}
+
+.mode-title {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  text-align: center;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.mode-card {
+  background: #f7f9ff;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px solid #dde3f5;
+}
+
+.mode-icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.mode-label {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.mode-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mode-separator {
+  margin: 1.2rem 0;
+  border: none;
+  border-top: 1px solid #dde3f5;
+}
+
+.range-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #4f8cff;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(79,140,255,0.4);
+  transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
+}
+
+.range-btn:hover {
+  background: #3b72e0;
+  transform: translateY(-1px);
+}
+
+/* Společné pro hry */
+
+.level-info {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.problem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #f7f9ff;
+}
+
+.group,
+.operator,
+.equals,
+.result-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+}
+
+.group {
+  min-width: 80px;
+  text-align: center;
+}
+
+.shapes {
+  display: grid;
+  gap: 4px;
+  justify-content: center;
+  min-height: 32px;
+}
+
+.shape {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background-color: var(--shape-color, #4f8cff);
+  transition: transform 0.15s;
+}
+
+.shape--circle {
+  border-radius: 50%;
+}
+
+.shape--diamond {
+  transform: rotate(45deg);
+  border-radius: 6px;
+}
+
+.shape--rounded {
+  border-radius: 999px;
+}
+
+.operator,
+.equals {
+  font-size: 1.8rem;
+  font-weight: 600;
+  min-width: 30px;
+  text-align: center;
+}
+
+.result-placeholder {
+  min-width: 40px;
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  border: 2px dashed #c3cce8;
+}
+
+/* Velké číslo (u číselných her) */
+
+.big-number {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+/* Výběr čísla */
+
+.number-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.num-btn {
+  border: 1px solid #c3cce8;
+  background: #fff;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: 36px;
+  text-align: center;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s, border-color 0.1s;
+}
+
+.num-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.num-btn.selected {
+  background: #4f8cff;
+  color: #fff;
+  border-color: #4f8cff;
+  box-shadow: 0 3px 10px rgba(79,140,255,0.4);
+}
+
+/* Výběr znaménka pro porovnávání */
+
+.sign-picker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.sign-btn {
+  border: 1px solid #c3cce8;
+  background: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  min-width: 44px;
+  text-align: center;
+  transition: transform 0.1s, box-shadow 0.1s, background 0.1s, border-color 0.1s;
+}
+
+.sign-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.sign-btn.selected {
+  background: #4f8cff;
+  color: #fff;
+  border-color: #4f8cff;
+  box-shadow: 0 3px 10px rgba(79,140,255,0.4);
+}
+
+/* Ovládací tlačítka */
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.1s, opacity 0.15s;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
+
+#checkBtn,
+#checkNumBtn,
+#checkCompareBtn,
+#checkCompareNumBtn {
+  background: #4f8cff;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(79,140,255,0.4);
+}
+
+#checkBtn:hover:not(:disabled),
+#checkNumBtn:hover:not(:disabled),
+#checkCompareBtn:hover:not(:disabled),
+#checkCompareNumBtn:hover:not(:disabled) {
+  background: #3b72e0;
+  transform: translateY(-1px);
+}
+
+#nextBtn,
+#nextNumBtn,
+#nextCompareBtn,
+#nextCompareNumBtn {
+  background: #e6ecff;
+  color: #355;
+}
+
+#nextBtn:hover:not(:disabled),
+#nextNumBtn:hover:not(:disabled),
+#nextCompareBtn:hover:not(:disabled),
+#nextCompareNumBtn:hover:not(:disabled) {
+  background: #d3ddff;
+  transform: translateY(-1px);
+}
+
+/* Feedback a souhrny */
+
+.feedback {
+  text-align: center;
+  min-height: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.feedback.correct {
+  color: #1a9b4a;
+}
+
+.feedback.wrong {
+  color: #d0342c;
+}
+
+.summary {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #f5f7ff;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.highlight {
+  font-weight: 700;
+}
+
+/* Animace */
+
+.animate-correct {
+  animation: pop 0.4s ease-out;
+  border-color: #1a9b4a !important;
+  background: #e5f9ee !important;
+  color: #1a9b4a !important;
+}
+
+.animate-wrong {
+  animation: shake 0.35s ease-in-out;
+  border-color: #d0342c !important;
+  background: #ffe9e7 !important;
+  color: #d0342c !important;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@media (max-width: 600px) {
+  .game {
+    padding: 1.1rem;
+  }
+  h1 {
+    font-size: 1.4rem;
+  }
+  .operator,
+  .equals {
+    font-size: 1.6rem;
+  }
+  .shape {
+    width: 16px;
+    height: 16px;
+  }
+  .big-number {
+    font-size: 2rem;
+  }
+}
+/* Tlačítko pro ukončení hry / návrat na úvod */
+
+.exit-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid #d0342c;
+  background: #fff5f5;
+  color: #b02020;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  z-index: 10;
+}
+
+.exit-btn:hover {
+  background: #ffe0e0;
+  transform: translateY(-1px);
+}
+
+.exit-btn:active {
+  transform: translateY(0);
+}
+/* Modal pro ukončení hry */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100; /* nad vším ostatním */
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+
+.modal-dialog {
+  position: relative;
+  background: #ffffff;
+  border-radius: 0.9rem;
+  padding: 1rem 1.25rem;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  z-index: 101;
+}
+
+.modal-dialog h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+}
+
+.modal-dialog p {
+  margin: 0 0 0.8rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn-secondary,
+.btn-danger {
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #eef1ff;
+  color: #355;
+}
+
+.btn-secondary:hover {
+  background: #dde3ff;
+}
+
+.btn-danger {
+  background: #d0342c;
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: #b82822;
+}
+
+/* Tlačítko v rohu (už máš, jen připomínám) */
+.exit-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  border-radius: 1rem;
+  border: 1px solid #d0342c;
+  background: #fff5f5;
+  color: #b02020;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  z-index: 10;
+}
+
+.exit-btn:hover {
+  background: #ffe0e0;
+  transform: translateY(-1px);
+}
+/* Konfeti ohňostroj při 10/10 */
+
+.celebration-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 200; /* nad vším ostatním */
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-fall 2.5s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -100px, 0) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 110vh, 0) rotateZ(720deg);
+    opacity: 0;
+  }
+}
