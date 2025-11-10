@@ -4,6 +4,8 @@ import { initCountingGame, startNewGame as startCountingGame } from './game-coun
 import { initCompareGame, startCompareGame } from './game-compare.js';
 import { initCountingNumbersGame, startNumbersGame } from './game-counting-numbers.js';
 import { initCompareNumbersGame, startCompareNumbersGame } from './game-compare-numbers.js';
+import { initCountingNumbersAdvancedGame, startNumbersAdvancedGame } from './game-counting-numbers-advanced.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   // inicializace panelu s věží
@@ -13,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startScreen = document.getElementById('startScreen');
   const gameScreenShapes = document.getElementById('gameScreen');                  // sčítání/odčítání – tvary
   const gameScreenNumbers = document.getElementById('gameScreenNumbers');          // sčítání/odčítání – čísla
+  const gameScreenNumbersAdvanced = document.getElementById('gameScreenNumbersAdvanced'); // sčítání -odečítání složitější
   const gameScreenCompareShapes = document.getElementById('gameScreenCompare');    // porovnávání – tvary
   const gameScreenCompareNumbers = document.getElementById('gameScreenCompareNumbers'); // porovnávání – čísla
 
@@ -28,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startScreen.hidden = true;
     gameScreenShapes.hidden = true;
     gameScreenNumbers.hidden = true;
+    gameScreenNumbersAdvanced.hidden = true;
     gameScreenCompareShapes.hidden = true;
     gameScreenCompareNumbers.hidden = true;
 
@@ -47,6 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
       gameScreenShapes.hidden = false;
     } else if (screen === 'countNumbers') {
       gameScreenNumbers.hidden = false;
+    } else if (screen === 'countNumbersAdvanced') {    // NOVÉ
+      gameScreenNumbersAdvanced.hidden = false;
     } else if (screen === 'compareShapes') {
       gameScreenCompareShapes.hidden = false;
     } else if (screen === 'compareNumbers') {
@@ -116,6 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  initCountingNumbersAdvancedGame({
+    onBackToMenu: () => {
+      resetTower();
+      showScreen('start');
+    },
+  });
+
   // tlačítka na výběr hry + rozsahu (na úvodní obrazovce)
   document.querySelectorAll('.range-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -131,6 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (game === 'countNumbers') {
         showScreen('countNumbers');
         startNumbersGame(range);
+      } else if (game === 'countNumbersAdvanced') {      // NOVÉ
+        showScreen('countNumbersAdvanced');
+        startNumbersAdvancedGame(range);
       } else if (game === 'compareShapes') {
         showScreen('compareShapes');
         startCompareGame(range);
