@@ -57,6 +57,15 @@
         </div>
       </div>
 
+          <!-- Složitější příklady vždy do 20 -->
+      <div class="mode-card">
+        <div class="mode-icon">1 ± 2 ± _</div>
+        <div class="mode-label">čísla – 2. úroveň</div>
+        <div class="mode-buttons">
+        <button class="range-btn" data-game="countNumbersAdvanced" data-range="20">do 20</button>
+        </div>
+      </div>
+
       <hr class="mode-separator">
 
       <div class="mode-section">
@@ -162,6 +171,50 @@
         </div>
       </div>
     </div>
+<!-- Herní obrazovka: počítání s čísly – 2. úroveň (4 čísla, jedno chybí) -->
+<div id="gameScreenNumbersAdvanced" hidden>
+  <div class="level-info">
+    Úroveň <span id="levelNumAdv">1</span>/10 • Skóre: <span id="scoreNumAdv">0</span> • Rozsah: do <span id="rangeLabelNumAdv">20</span>
+  </div>
+
+  <div class="problem">
+    <div class="group">
+      <div class="big-number" id="numAdvA">?</div>
+    </div>
+    <div class="operator" id="operatorNumAdv1">+</div>
+    <div class="group">
+      <div class="big-number" id="numAdvB">?</div>
+    </div>
+    <div class="operator" id="operatorNumAdv2">+</div>
+    <div class="group">
+      <div class="big-number" id="numAdvC">?</div>
+    </div>
+    <div class="equals">=</div>
+    <div class="group">
+      <div class="big-number" id="numAdvResult">?</div>
+    </div>
+  </div>
+
+  <div class="number-picker" id="numberPickerNumAdv"></div>
+
+  <div class="controls">
+    <button id="checkNumAdvBtn" disabled>Zkontroluj</button>
+    <button id="nextNumAdvBtn" disabled>Další příklad</button>
+  </div>
+
+  <div class="feedback" id="feedbackNumAdv"></div>
+
+  <div class="summary" id="summaryNumAdv" hidden>
+    <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+    <div>
+      Měl jsi <span class="highlight" id="finalScoreNumAdv"></span> z 10 dobře.
+    </div>
+    <div style="margin-top:0.5rem;">
+      <button id="restartNumAdvBtn">Hrát znovu</button>
+      <button id="backNumAdvBtn">Zpět na výběr hry</button>
+    </div>
+  </div>
+</div>
 
     <!-- Herní obrazovka: porovnávání tvarů -->
     <div id="gameScreenCompare" hidden>
