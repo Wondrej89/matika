@@ -5,6 +5,8 @@ import { initCompareGame, startCompareGame } from './game-compare.js';
 import { initCountingNumbersGame, startNumbersGame } from './game-counting-numbers.js';
 import { initCompareNumbersGame, startCompareNumbersGame } from './game-compare-numbers.js';
 import { initCountingNumbersAdvancedGame, startNumbersAdvancedGame } from './game-counting-numbers-advanced.js';
+import { initCountingNumbersMissingGame, startNumbersMissingGame } from './game-counting-numbers-missing.js';
+
 
 document.addEventListener('DOMContentLoaded', () => {
   // inicializace panelu s věží
@@ -17,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameScreenNumbersAdvanced = document.getElementById('gameScreenNumbersAdvanced'); // sčítání/odčítání – čísla (2. úroveň)
   const gameScreenCompareShapes = document.getElementById('gameScreenCompare');      // porovnávání – tvary
   const gameScreenCompareNumbers = document.getElementById('gameScreenCompareNumbers');   // porovnávání – čísla
+  const gameScreenNumbersMissing = document.getElementById('gameScreenNumbersMissing'); // sčítání a odčítání s chybějícím číslem
+
 
   const rewardPanel = document.getElementById('rewardPanel');
 
@@ -56,8 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
       gameScreenCompareShapes.hidden = false;
     } else if (screen === 'compareNumbers') {
       gameScreenCompareNumbers.hidden = false;
+    } else if (screen === 'countNumbersMissing') {
+  gameScreenNumbersMissing.hidden = false;
     }
-  }
 
   // práce s modem
   function openExitModal() {
@@ -128,6 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  initCountingNumbersMissingGame({
+    onBackToMenu: () => { 
+      resetTower(); 
+      showScreen('start'); },
+  });
+
   // tlačítka na výběr hry + rozsahu (na úvodní obrazovce)
   document.querySelectorAll('.range-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -152,7 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (game === 'compareNumbers') {
         showScreen('compareNumbers');
         startCompareNumbersGame(range);
-      }
+      } else if (game === 'countNumbersMissing') {
+        showScreen('countNumbersMissing');
+        startNumbersMissingGame(range);
     });
   });
 
