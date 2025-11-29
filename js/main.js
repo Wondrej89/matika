@@ -7,7 +7,6 @@ import { initCompareNumbersGame, startCompareNumbersGame } from './game-compare-
 import { initCountingNumbersAdvancedGame, startNumbersAdvancedGame } from './game-counting-numbers-advanced.js';
 import { initCountingNumbersMissingGame, startNumbersMissingGame } from './game-counting-numbers-missing.js';
 
-
 document.addEventListener('DOMContentLoaded', () => {
   // inicializace panelu s věží
   initReward();
@@ -19,8 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameScreenNumbersAdvanced = document.getElementById('gameScreenNumbersAdvanced'); // sčítání/odčítání – čísla (2. úroveň)
   const gameScreenCompareShapes = document.getElementById('gameScreenCompare');      // porovnávání – tvary
   const gameScreenCompareNumbers = document.getElementById('gameScreenCompareNumbers');   // porovnávání – čísla
-  const gameScreenNumbersMissing = document.getElementById('gameScreenNumbersMissing'); // sčítání a odčítání s chybějícím číslem
-
+  const gameScreenNumbersMissing = document.getElementById('gameScreenNumbersMissing');   // sčítání/odčítání – doplň číslo
 
   const rewardPanel = document.getElementById('rewardPanel');
 
@@ -30,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const exitConfirmBtn = document.getElementById('exitConfirmBtn');
   const exitCancelBtn = document.getElementById('exitCancelBtn');
 
-  // pomocná funkce na přepínání obrazovek
+  // přepínání obrazovek
   function showScreen(screen) {
     // vše schovat
     startScreen.hidden = true;
@@ -39,7 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gameScreenNumbersAdvanced.hidden = true;
     gameScreenCompareShapes.hidden = true;
     gameScreenCompareNumbers.hidden = true;
+    gameScreenNumbersMissing.hidden = true; // ← bylo vynechané
 
+    // tlačítko a věž jen ve hře
     if (screen === 'start') {
       exitGameBtn.hidden = true;
       if (rewardPanel) rewardPanel.hidden = true;
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (rewardPanel) rewardPanel.hidden = false;
     }
 
+    // ukázat cílovou obrazovku
     if (screen === 'start') {
       startScreen.hidden = false;
     } else if (screen === 'countShapes') {
@@ -61,83 +62,42 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (screen === 'compareNumbers') {
       gameScreenCompareNumbers.hidden = false;
     } else if (screen === 'countNumbersMissing') {
-  gameScreenNumbersMissing.hidden = false;
+      gameScreenNumbersMissing.hidden = false;
     }
+  } // ← chyběla koncová závorka funkce
 
-  // práce s modem
+  // modal: otevřít/zavřít
   function openExitModal() {
     exitModal.hidden = false;
   }
-
   function closeExitModal() {
     exitModal.hidden = true;
   }
 
-  // klik na "× Ukončit hru" – jen otevře modal
-  exitGameBtn.addEventListener('click', () => {
-    openExitModal();
-  });
-
-  // v modalu: zůstat ve hře
-  exitCancelBtn.addEventListener('click', () => {
-    closeExitModal();
-  });
-
+  // klik na "× Ukončit hru" – otevře modal
+  exitGameBtn.addEventListener('click', () => openExitModal());
+  // v modalu: zůstat
+  exitCancelBtn.addEventListener('click', () => closeExitModal());
   // v modalu: opravdu ukončit
   exitConfirmBtn.addEventListener('click', () => {
     closeExitModal();
-    resetTower();        // smažeme věž
-    showScreen('start'); // návrat na úvod
+    resetTower();
+    showScreen('start');
   });
-
-  // kliknutí na pozadí modalu (mimo dialog) taky zavře
+  // klik mimo dialog zavře modal
   exitModal.addEventListener('click', (e) => {
     if (e.target === exitModal || e.target.classList.contains('modal-backdrop')) {
       closeExitModal();
     }
   });
 
-  // inicializace jednotlivých her (callback po kliknutí na "Zpět na výběr hry" v summary)
-  initCountingGame({
-    onBackToMenu: () => {
-      resetTower();
-      showScreen('start');
-    },
-  });
-
-  initCountingNumbersGame({
-    onBackToMenu: () => {
-      resetTower();
-      showScreen('start');
-    },
-  });
-
-  initCountingNumbersAdvancedGame({
-    onBackToMenu: () => {
-      resetTower();
-      showScreen('start');
-    },
-  });
-
-  initCompareGame({
-    onBackToMenu: () => {
-      resetTower();
-      showScreen('start');
-    },
-  });
-
-  initCompareNumbersGame({
-    onBackToMenu: () => {
-      resetTower();
-      showScreen('start');
-    },
-  });
-
-  initCountingNumbersMissingGame({
-    onBackToMenu: () => { 
-      resetTower(); 
-      showScreen('start'); },
-  });
+  // inicializace her
+  initCountingGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initCountingNumbersGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initCountingNumbersAdvancedGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initCompareGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initCompareNumbersGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initCountingNumbersMissingGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
 
   // tlačítka na výběr hry + rozsahu (na úvodní obrazovce)
   document.querySelectorAll('.range-btn').forEach(btn => {
@@ -145,8 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const game = btn.dataset.game;
       const range = parseInt(btn.dataset.range, 10);
 
-      // nová hra = nová věž
-      resetTower();
+      resetTower(); // nová hra = nová věž
 
       if (game === 'countShapes') {
         showScreen('countShapes');
@@ -166,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (game === 'countNumbersMissing') {
         showScreen('countNumbersMissing');
         startNumbersMissingGame(range);
+      }
     });
   });
 
