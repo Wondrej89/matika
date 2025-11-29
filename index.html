@@ -56,7 +56,14 @@
           </div>
         </div>
       </div>
-
+      <div class="mode-card">
+        <div class="mode-icon">_ ± 3 = 5</div>
+        <div class="mode-label">čísla – doplň číslo</div>
+        <div class="mode-buttons">
+          <button class="range-btn" data-game="countNumbersMissing" data-range="10">do 10</button>
+          <button class="range-btn" data-game="countNumbersMissing" data-range="20">do 20</button>
+        </div>
+      </div>
           <!-- Složitější příklady vždy do 20 -->
       <div class="mode-card">
         <div class="mode-icon">1 ± 2 ± _</div>
@@ -88,6 +95,15 @@
             <div class="mode-buttons">
               <button class="range-btn" data-game="compareNumbers" data-range="10">do 10</button>
               <button class="range-btn" data-game="compareNumbers" data-range="20">do 20</button>
+            </div>
+          </div>
+
+          <!-- Turbo Mód -->
+          <div class="mode-card">
+            <div class="mode-icon">⚡</div>
+            <div class="mode-label">Turbo mód</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="turbo" data-range="20">start</button>
             </div>
           </div>
         </div>
@@ -171,6 +187,50 @@
         </div>
       </div>
     </div>
+<!-- Herní obrazovka: čísla – 2 členy, chybí první nebo druhý -->
+<div id="gameScreenNumbersMissing" hidden>
+  <div class="level-info">
+    Úroveň <span id="levelNumMiss">1</span>/10 • Skóre: <span id="scoreNumMiss">0</span> • Rozsah: do <span id="rangeLabelNumMiss">10</span>
+  </div>
+
+  <div class="problem">
+    <div class="group">
+      <div class="big-number" id="missLeftNum">?</div>
+    </div>
+    <div class="operator" id="missOperator">+</div>
+    <div class="group">
+      <div class="big-number" id="missRightNum">?</div>
+    </div>
+    <div class="equals">=</div>
+    <div class="group">
+      <div class="big-number" id="missResultNum">?</div>
+    </div>
+  </div>
+
+  <div class="number-picker" id="numberPickerNumMiss"></div>
+
+  <div class="controls">
+    <button id="checkNumMissBtn" disabled>Zkontroluj</button>
+    <button id="nextNumMissBtn" disabled>Další příklad</button>
+  </div>
+
+  <div class="feedback" id="feedbackNumMiss"></div>
+
+  <div class="summary" id="summaryNumMiss" hidden>
+    <div>Hotovo! Dokončil jsi všech 10 úrovní.</div>
+    <div>
+      Měl jsi <span class="highlight" id="finalScoreNumMiss"></span> z 10 dobře.
+    </div>
+    <div style="margin-top:0.5rem;">
+      <button id="restartNumMissBtn">Hrát znovu</button>
+      <button id="backNumMissBtn">Zpět na výběr hry</button>
+    </div>
+  </div>
+</div>
+
+
+
+
 <!-- Herní obrazovka: počítání s čísly – 2. úroveň (4 čísla, jedno chybí) -->
 <div id="gameScreenNumbersAdvanced" hidden>
   <div class="level-info">
@@ -252,6 +312,46 @@
         </div>
       </div>
     </div>
+<!-- Turbo mód – rychlé příklady na čas -->
+<div id="gameScreenTurbo" hidden>
+  <div class="turbo-top-bar">
+    <div>Turbo mód</div>
+    <div>Skóre: <span id="turboScore">0</span></div>
+    <div>Obtížnost: <span id="turboLevel">1</span></div>
+    <div>Životy: <span id="turboLives">❤️❤️❤️</span></div>
+  </div>
+<!-- Game over modal pro turbo mód -->
+<div id="turboGameOverModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <h2>Konec hry</h2>
+    <p>Tvoje skóre je <span id="turboFinalScore" class="highlight"></span>.</p>
+    <div class="modal-buttons">
+      <button id="turboRetryBtn" class="btn-secondary">Zkusit znovu</button>
+      <button id="turboQuitBtn" class="btn-danger">Ukončit</button>
+    </div>
+  </div>
+</div>
+
+  <div class="turbo-timer">
+    <div class="turbo-timer-fill" id="turboTimerFill"></div>
+  </div>
+
+  <div class="turbo-problem">
+    <span id="turboA">1</span>
+    <span id="turboOp">+</span>
+    <span id="turboB">1</span>
+    <span>=</span>
+    <span id="turboQuestionMark">?</span>
+  </div>
+
+  <div class="turbo-picker">
+    <div class="turbo-row" id="turboRow1"></div>
+    <div class="turbo-row" id="turboRow2" hidden></div>
+  </div>
+
+  <div class="feedback" id="turboFeedback"></div>
+</div>
 
     <!-- Herní obrazovka: porovnávání čísel -->
     <div id="gameScreenCompareNumbers" hidden>
