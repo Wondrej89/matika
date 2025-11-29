@@ -13,13 +13,18 @@ let timerId = null;
 let timeStart = 0;
 let timeLimitMs = baseTimeMs;
 
+let lives = 3;
+let isGameOver = false;
+
 let aEl, bEl, opEl, qmEl;
-let scoreEl, levelEl;
+let scoreEl, levelEl, livesEl;
 let timerFillEl;
 let row1El, row2El;
 let feedbackEl;
-
 let screenEl;
+
+// Game over modal
+let gameOverModalEl, turboFinalScoreEl, turboRetryBtn, turboQuitBtn;
 
 let callbacks = { onBackToMenu: null };
 
@@ -30,6 +35,7 @@ export function initTurboGame(options = {}) {
 
   scoreEl = document.getElementById('turboScore');
   levelEl = document.getElementById('turboLevel');
+  livesEl = document.getElementById('turboLives');
   timerFillEl = document.getElementById('turboTimerFill');
 
   aEl = document.getElementById('turboA');
@@ -41,6 +47,29 @@ export function initTurboGame(options = {}) {
   row2El = document.getElementById('turboRow2');
   feedbackEl = document.getElementById('turboFeedback');
 
+  // game over modal
+  gameOverModalEl = document.getElementById('turboGameOverModal');
+  turboFinalScoreEl = document.getElementById('turboFinalScore');
+  turboRetryBtn = document.getElementById('turboRetryBtn');
+  turboQuitBtn = document.getElementById('turboQuitBtn');
+
+  turboRetryBtn.addEventListener('click', () => {
+    hideGameOver();
+    startTurboGame();
+  });
+
+  turboQuitBtn.addEventListener('click', () => {
+    hideGameOver();
+    if (callbacks.onBackToMenu) callbacks.onBackToMenu();
+  });
+
+  // volitelné: klik na backdrop zavře also (ale tady asi nechceme, nechám to čisté)
+  // gameOverModalEl.addEventListener('click', (e) => {
+  //   if (e.target === gameOverModalEl || e.target.classList.contains('modal-backdrop')) {
+  //     hideGameOver();
+  //   }
+  // });
+
   createNumberButtons();
 }
 
@@ -51,10 +80,13 @@ export function startTurboGame() {
   maxValue = 2;
   questionCount = 0;
   timeLimitMs = baseTimeMs;
+  lives = 3;
+  isGameOver = false;
 
   scoreEl.textContent = score;
   levelEl.textContent = level;
   feedbackEl.textContent = '';
+  updateLivesDisplay();
 
   updateRowsVisibility();
   resetButtonStates();
@@ -102,6 +134,8 @@ function resetButtonStates() {
 }
 
 function nextQuestion() {
+  if (isGameOver) return;
+
   clearTimer();
 
   questionCount++;
@@ -119,6 +153,7 @@ function nextQuestion() {
   currentAnswer = problem.result;
   feedbackEl.textContent = '';
 
+  screenEl.classList.remove('locked');
   resetButtonStates();
   startTimer();
 }
@@ -143,6 +178,7 @@ function generateProblem() {
 }
 
 function handleAnswerClick(value, btn) {
+  if (isGameOver) return;
   if (currentAnswer === null) return;
   // odpověď jen jednou
   if (screenEl.classList.contains('locked')) return;
@@ -161,16 +197,13 @@ function handleAnswerClick(value, btn) {
     btn.classList.add('wrong');
     feedbackEl.textContent = `Špatně, správná odpověď byla ${currentAnswer}.`;
     // zvýraznit správné tlačítko
-    screenEl.querySelectorAll('.num-btn').forEach(b => {
-      if (parseInt(b.dataset.value, 10) === currentAnswer) {
-        b.classList.add('correct');
-      }
-    });
+    highlightCorrectButton();
+    loseLife();
+    if (isGameOver) return;
   }
 
   // po krátké pauze další příklad
   setTimeout(() => {
-    screenEl.classList.remove('locked');
     nextQuestion();
   }, 800);
 }
@@ -184,6 +217,11 @@ function startTimer() {
 }
 
 function tickTimer(now) {
+  if (isGameOver) {
+    clearTimer();
+    return;
+  }
+
   const elapsed = now - timeStart;
   const ratio = 1 - elapsed / timeLimitMs;
 
@@ -199,18 +237,16 @@ function tickTimer(now) {
 }
 
 function handleTimeout() {
+  if (isGameOver) return;
   if (screenEl.classList.contains('locked')) return;
   screenEl.classList.add('locked');
 
   feedbackEl.textContent = `Čas vypršel, správná odpověď byla ${currentAnswer}.`;
-  screenEl.querySelectorAll('.num-btn').forEach(b => {
-    if (parseInt(b.dataset.value, 10) === currentAnswer) {
-      b.classList.add('correct');
-    }
-  });
+  highlightCorrectButton();
+  loseLife();
+  if (isGameOver) return;
 
   setTimeout(() => {
-    screenEl.classList.remove('locked');
     nextQuestion();
   }, 900);
 }
@@ -233,6 +269,45 @@ function increaseDifficulty() {
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function highlightCorrectButton() {
+  screenEl.querySelectorAll('.num-btn').forEach(b => {
+    if (parseInt(b.dataset.value, 10) === currentAnswer) {
+      b.classList.add('correct');
+    }
+  });
+}
+
+function loseLife() {
+  lives--;
+  updateLivesDisplay();
+  if (lives <= 0) {
+    gameOver();
+  }
+}
+
+function updateLivesDisplay() {
+  const full = '❤️'.repeat(Math.max(0, lives));
+  const empty = '🤍'.repeat(Math.max(0, 3 - lives));
+  livesEl.textContent = full + empty;
+}
+
+function gameOver() {
+  isGameOver = true;
+  clearTimer();
+  screenEl.classList.add('locked');
+  showGameOver();
+}
+
+function showGameOver() {
+  turboFinalScoreEl.textContent = score;
+  gameOverModalEl.hidden = false;
+}
+
+function hideGameOver() {
+  gameOverModalEl.hidden = true;
+  isGameOver = false;
 }
 
 // jednoduchý konfeti efekt – používá .celebration-overlay a .confetti z CSS

@@ -725,3 +725,6 @@ button:disabled {
     opacity: 0;
   }
 }
+#turboLives {
+  font-size: 1rem;
+}

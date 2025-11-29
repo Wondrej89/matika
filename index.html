@@ -318,7 +318,20 @@
     <div>Turbo mód</div>
     <div>Skóre: <span id="turboScore">0</span></div>
     <div>Obtížnost: <span id="turboLevel">1</span></div>
+    <div>Životy: <span id="turboLives">❤️❤️❤️</span></div>
   </div>
+<!-- Game over modal pro turbo mód -->
+<div id="turboGameOverModal" class="modal" hidden>
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog">
+    <h2>Konec hry</h2>
+    <p>Tvoje skóre je <span id="turboFinalScore" class="highlight"></span>.</p>
+    <div class="modal-buttons">
+      <button id="turboRetryBtn" class="btn-secondary">Zkusit znovu</button>
+      <button id="turboQuitBtn" class="btn-danger">Ukončit</button>
+    </div>
+  </div>
+</div>
 
   <div class="turbo-timer">
     <div class="turbo-timer-fill" id="turboTimerFill"></div>

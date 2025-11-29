@@ -42,14 +42,19 @@ document.addEventListener('DOMContentLoaded', () => {
     gameScreenNumbersMissing.hidden = true;
     gameScreenTurbo.hidden = true;
 
-    // tlačítko a věž jen ve hře
-    if (screen === 'start') {
-      exitGameBtn.hidden = true;
-      if (rewardPanel) rewardPanel.hidden = true;
-    } else {
-      exitGameBtn.hidden = false;
-      if (rewardPanel) rewardPanel.hidden = false;
-    }
+// tlačítko a věž – speciálně pro turbo
+if (screen === 'start') {
+  exitGameBtn.hidden = true;
+  if (rewardPanel) rewardPanel.hidden = true;
+} else if (screen === 'turbo') {
+  // v turbo módu chceme mít tlačítko, ale NE věž
+  exitGameBtn.hidden = false;
+  if (rewardPanel) rewardPanel.hidden = true;
+} else {
+  // ostatní hry: tlačítko + věž
+  exitGameBtn.hidden = false;
+  if (rewardPanel) rewardPanel.hidden = false;
+}
 
     // ukázat cílovou obrazovku
     if (screen === 'start') {
