@@ -97,6 +97,15 @@
               <button class="range-btn" data-game="compareNumbers" data-range="20">do 20</button>
             </div>
           </div>
+
+          <!-- Turbo Mód -->
+          <div class="mode-card">
+            <div class="mode-icon">⚡</div>
+            <div class="mode-label">Turbo mód</div>
+            <div class="mode-buttons">
+              <button class="range-btn" data-game="turbo" data-range="20">start</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -303,6 +312,33 @@
         </div>
       </div>
     </div>
+<!-- Turbo mód – rychlé příklady na čas -->
+<div id="gameScreenTurbo" hidden>
+  <div class="turbo-top-bar">
+    <div>Turbo mód</div>
+    <div>Skóre: <span id="turboScore">0</span></div>
+    <div>Obtížnost: <span id="turboLevel">1</span></div>
+  </div>
+
+  <div class="turbo-timer">
+    <div class="turbo-timer-fill" id="turboTimerFill"></div>
+  </div>
+
+  <div class="turbo-problem">
+    <span id="turboA">1</span>
+    <span id="turboOp">+</span>
+    <span id="turboB">1</span>
+    <span>=</span>
+    <span id="turboQuestionMark">?</span>
+  </div>
+
+  <div class="turbo-picker">
+    <div class="turbo-row" id="turboRow1"></div>
+    <div class="turbo-row" id="turboRow2" hidden></div>
+  </div>
+
+  <div class="feedback" id="turboFeedback"></div>
+</div>
 
     <!-- Herní obrazovka: porovnávání čísel -->
     <div id="gameScreenCompareNumbers" hidden>
