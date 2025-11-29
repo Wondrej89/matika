@@ -6,6 +6,7 @@ import { initCountingNumbersGame, startNumbersGame } from './game-counting-numbe
 import { initCompareNumbersGame, startCompareNumbersGame } from './game-compare-numbers.js';
 import { initCountingNumbersAdvancedGame, startNumbersAdvancedGame } from './game-counting-numbers-advanced.js';
 import { initCountingNumbersMissingGame, startNumbersMissingGame } from './game-counting-numbers-missing.js';
+import { initTurboGame, startTurboGame } from './game-turbo.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // inicializace panelu s věží
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gameScreenCompareShapes = document.getElementById('gameScreenCompare');      // porovnávání – tvary
   const gameScreenCompareNumbers = document.getElementById('gameScreenCompareNumbers');   // porovnávání – čísla
   const gameScreenNumbersMissing = document.getElementById('gameScreenNumbersMissing');   // sčítání/odčítání – doplň číslo
+  const gameScreenTurbo = document.getElementById('gameScreenTurbo');                // turbo mód
 
   const rewardPanel = document.getElementById('rewardPanel');
 
@@ -37,16 +39,22 @@ document.addEventListener('DOMContentLoaded', () => {
     gameScreenNumbersAdvanced.hidden = true;
     gameScreenCompareShapes.hidden = true;
     gameScreenCompareNumbers.hidden = true;
-    gameScreenNumbersMissing.hidden = true; // ← bylo vynechané
+    gameScreenNumbersMissing.hidden = true;
+    gameScreenTurbo.hidden = true;
 
-    // tlačítko a věž jen ve hře
-    if (screen === 'start') {
-      exitGameBtn.hidden = true;
-      if (rewardPanel) rewardPanel.hidden = true;
-    } else {
-      exitGameBtn.hidden = false;
-      if (rewardPanel) rewardPanel.hidden = false;
-    }
+// tlačítko a věž – speciálně pro turbo
+if (screen === 'start') {
+  exitGameBtn.hidden = true;
+  if (rewardPanel) rewardPanel.hidden = true;
+} else if (screen === 'turbo') {
+  // v turbo módu chceme mít tlačítko, ale NE věž
+  exitGameBtn.hidden = false;
+  if (rewardPanel) rewardPanel.hidden = true;
+} else {
+  // ostatní hry: tlačítko + věž
+  exitGameBtn.hidden = false;
+  if (rewardPanel) rewardPanel.hidden = false;
+}
 
     // ukázat cílovou obrazovku
     if (screen === 'start') {
@@ -63,8 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
       gameScreenCompareNumbers.hidden = false;
     } else if (screen === 'countNumbersMissing') {
       gameScreenNumbersMissing.hidden = false;
+    } else if (screen === 'turbo') {
+      gameScreenTurbo.hidden = false;
     }
-  } // ← chyběla koncová závorka funkce
+  } // ← TADY CHYBĚLA TAHLE ZÁVORKA
 
   // modal: otevřít/zavřít
   function openExitModal() {
@@ -76,14 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // klik na "× Ukončit hru" – otevře modal
   exitGameBtn.addEventListener('click', () => openExitModal());
+
   // v modalu: zůstat
   exitCancelBtn.addEventListener('click', () => closeExitModal());
+
   // v modalu: opravdu ukončit
   exitConfirmBtn.addEventListener('click', () => {
     closeExitModal();
     resetTower();
     showScreen('start');
   });
+
   // klik mimo dialog zavře modal
   exitModal.addEventListener('click', (e) => {
     if (e.target === exitModal || e.target.classList.contains('modal-backdrop')) {
@@ -98,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCompareGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
   initCompareNumbersGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
   initCountingNumbersMissingGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
+  initTurboGame({ onBackToMenu: () => { resetTower(); showScreen('start'); } });
 
   // tlačítka na výběr hry + rozsahu (na úvodní obrazovce)
   document.querySelectorAll('.range-btn').forEach(btn => {
@@ -125,6 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (game === 'countNumbersMissing') {
         showScreen('countNumbersMissing');
         startNumbersMissingGame(range);
+      } else if (game === 'turbo') {
+        showScreen('turbo');
+        startTurboGame();
       }
     });
   });
